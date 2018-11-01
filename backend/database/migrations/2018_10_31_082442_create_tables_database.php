@@ -19,7 +19,7 @@ class CreateTablesDatabase extends Migration
             $this->setDatabaseFromClient($cliente);
             Schema::create('blog', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('nombre', 20);
+                $table->string('nombre', 100);
                 $table->string('descripcion', 255);
             });
             \DB::unprepared("DROP PROCEDURE IF EXISTS `ObtenerInformacionBlog`;
