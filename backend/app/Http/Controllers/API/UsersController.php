@@ -16,11 +16,16 @@ use Illuminate\Support\Str;
 
 class UsersController extends Controller
 {
-
+    /*****Funcion getUser para obtener los datos en la seccion del usuario autenticado******/
     public function getUser(Request $request){
+        /****decodificar los datos guardados en la seccion y devolverlos****/
         $token = unserialize(base64_decode($request->get('tok')));
         return response()->json(['name' => $token['user_name']." ".$token['user_apellido'],'email' => $token['user_email']]);
     }
+
+    /***** fin funcion getUser ****/
+
+    /******funciones para cambiar la conexion de los clientes**********/
 
     public function getUserDB(Request $request){
         $token = unserialize(base64_decode($request->get('tok')));
@@ -39,6 +44,7 @@ class UsersController extends Controller
         ]);
         return response()->json(['name' => $token['user_name']." ".$token['user_apellido'],'email' => $token['user_email']]);
     }
+
 
     public static function getDatabaseConfigArray()
     {
@@ -78,6 +84,10 @@ class UsersController extends Controller
         \DB::disconnect();
     }
 
+    /*******fin funciones para cambiar conexion de los cientes*****/
+
+    /*****funcion getBlogs para listar los blogs *******/
+
     public function getBlogs(Request $request){
         $token = unserialize(base64_decode($request->get('tok')));
         $cliente = \DB::select('select a.*,b.* FROM clientes AS a INNER JOIN licencias AS b ON a.co_cli  = b.co_cli 
@@ -96,6 +106,10 @@ class UsersController extends Controller
         return response()->json($listado);
     }
 
+    /******fin funcion getBlogs *********/
+
+    /*****funcion getBlog para mostrarlos datos del blog en editar *******/
+
     public function getBlog(Request $request, $id)
     {
         $token = unserialize(base64_decode($request->get('tok')));
@@ -109,6 +123,10 @@ class UsersController extends Controller
 
         return $blog;
     }
+
+    /************fin funcion getBlog*********/
+
+    /***********funcion updateblog para actualizar los datos del blog*****************/
 
     public function updateBlog(BlogUpdateRequest $request, $id)
     {
@@ -129,6 +147,10 @@ class UsersController extends Controller
         return response()->json('Blog Actualizado', 200 );
     }
 
+    /*************fin funcion update blog********************/
+
+    /*************delete blog para elminar el blog seleccionado********************/
+
     public function deleteBlog(Request $request)
     {
         $token = unserialize(base64_decode($request->input('tok')));
@@ -142,6 +164,10 @@ class UsersController extends Controller
 
         return response()->json('Blog Eliminado', 200 );
     }
+
+    /**************fin delete blog******************/
+
+    /**************create blog para crear un blog*****************/
 
     public function createBlog(BlogAddRequest $request)
     {
@@ -157,6 +183,10 @@ class UsersController extends Controller
         return response()->json('Blog creado', 200 );
     }
 
+    /*************fin crear blog**********************/
+
+    /**************funcion logins para la autenticacion de los usuarios***********************/
+
     public function logins(LoginsUserRequest $request) {
 
         $client = \DB::select('call ObtenerInformacionClientes(?,?)',array($request->get('email'),hash( 'sha256', $request->get('password') )));
@@ -168,6 +198,7 @@ class UsersController extends Controller
         }
         else
         {
+            /********codificar los datos del usuario autenticado en una seccion*******************/
             return response()->json( [
                 'token' => base64_encode(serialize([
                     '_token' => $request->header('X-CSRF-TOKEN'), 
@@ -181,6 +212,9 @@ class UsersController extends Controller
         }
     }
 
+    /******************fin logins**************************/
+
+    /******************get licencia para obtener los dias que le quedan a la licencia*******************/
     public function getLicencia(Request $request){
         $token = unserialize(base64_decode($request->get('tok')));
         $cliente = \DB::select('select a.*,b.*,c.* FROM clientes AS a INNER JOIN licencias AS b ON a.co_cli  = b.co_cli 
@@ -191,4 +225,6 @@ class UsersController extends Controller
         $diff = $hoy->diffInDays($licencia);
         return response()->json($diff);
     }
+
+    /******************fin get licencia***************************/
 }
