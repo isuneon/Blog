@@ -70,26 +70,60 @@
             filltable(blogs) {
                 var page = this;
                 $(document).ready(function() {
+                    var table;
+                    if ( $.fn.dataTable.isDataTable( '#data_table' ) ) {
+                        table = $('#data_table').DataTable({
+                            data: blogs,
+                            "destroy": true,
+                            "columnDefs": [ {
+                                "targets": -1,
+                                "data": null,
+                                "render": function ( data, type, full, meta ) {
+                                    return '<a href="#/blogs/'+data[0]+'" class="btn btn-light btn--icon btn-sm" title="Editar Blog"><i class="actions__item zmdi zmdi-border-color"></i></a> <button type="button" date="'+data[0]+'" class="btn btn-light btn--icon btn-sm btn-del" title="Eliminar Blog"><i class="actions__item zmdi zmdi-delete"></i></button>';
+                                }
+                            } ]
+                        });
+                        /*$('#data_table tbody').on( 'click', 'button', function () {
+                            var data = table.row( $(this).parents('tr') ).data();
 
-                    var table = $('#data_table').DataTable({
-                        data: blogs,
-                        "destroy": true,
-                        "columnDefs": [ {
-                            "targets": -1,
-                            "data": null,
-                            "render": function ( data, type, full, meta ) {
-                                return '<a href="#/blogs/'+data[0]+'" class="btn btn-light btn--icon btn-sm" title="Editar Blog"><i class="actions__item zmdi zmdi-border-color"></i></a> <button type="button" date="'+data[0]+'" class="btn btn-light btn--icon btn-sm" title="Eliminar Blog"><i class="actions__item zmdi zmdi-delete"></i></button>';
+                            if(data[0] == $(this).attr('date')){
+                                page.delBlog(data[0]);
                             }
-                        } ]
-                    });
-                $('#data_table tbody').on( 'click', 'button', function () {
-                   var data = table.row( $(this).parents('tr') ).data();
+                        });*/
+                        $('.btn-del').on( 'click', function () {
+                            var data = table.row( $(this).parents('tr') ).data();
+                            if(data[0] == $(this).attr('date')){
+                                page.delBlog(data[0]);
+                            }
+                        });
+                    }
+                    else {
+                        table = $('#data_table').DataTable({
+                            data: blogs,
+                            "destroy": true,
+                            "columnDefs": [ {
+                                "targets": -1,
+                                "data": null,
+                                "render": function ( data, type, full, meta ) {
+                                    return '<a href="#/blogs/'+data[0]+'" class="btn btn-light btn--icon btn-sm" title="Editar Blog"><i class="actions__item zmdi zmdi-border-color"></i></a> <button type="button" date="'+data[0]+'" class="btn btn-light btn--icon btn-sm btn-del" title="Eliminar Blog"><i class="actions__item zmdi zmdi-delete"></i></button>';
+                                }
+                            } ]
+                        });
+                        /*$('#data_table tbody').on( 'click', 'button', function () {
+                            var data = table.row( $(this).parents('tr') ).data();
 
-                   if(data[0] == $(this).attr('date')){
-                     page.delBlog(data[0]);
-                   }
-                  } );
-                } );
+                            if(data[0] == $(this).attr('date')){
+                                page.delBlog(data[0]);
+                            }
+                        });*/
+                        $('.btn-del').on( 'click', function () {
+                            var data = table.row( $(this).parents('tr') ).data();
+                            if(data[0] == $(this).attr('date')){
+                                page.delBlog(data[0]);
+                            }
+                        });
+                    }
+                });
             } ,
             delBlog(id) {
                 if(confirm('Esta seguro que desea eliminar el BLOG?'))
